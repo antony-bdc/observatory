@@ -1,0 +1,17 @@
+---
+groups:
+  - name: minecraft
+    rules:
+      - alert: MinecraftDown
+        expr: minecraft_status_healthy == 0
+        for: 2m
+        labels: { severity: critical }
+        annotations:
+          summary: "Minecraft server {{ $labels.server }} is not responding"
+
+      - alert: MinecraftSlow
+        expr: minecraft_status_response_time_seconds > 0.5
+        for: 10m
+        labels: { severity: warning }
+        annotations:
+          summary: "Minecraft server {{ $labels.server }} answers slowly ({{ $value | humanizeDuration }})"

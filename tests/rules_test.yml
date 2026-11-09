@@ -1,0 +1,95 @@
+---
+# Run with: promtool test rules tests/rules_test.yml
+# Note: series intervals match the evaluation interval on purpose. With sparser
+# samples, Prometheus' 5-minute staleness window makes series disappear between points.
+rule_files:
+  - ../prometheus/rules/hosts.yml
+  - ../prometheus/rules/backups.yml
+  - ../prometheus/rules/minecraft.yml
+  - ../prometheus/rules/websites.yml
+
+evaluation_interval: 1m
+
+tests:
+  - name: target down fires after 2 minutes, not before
+    interval: 1m
+    input_series:
+      - series: 'up{job="node", instance="mc-01:9100"}'
+        values: "1 0 0 0 0"
+    alert_rule_test:
+      - eval_time: 2m
+        alertname: TargetDown
+        exp_alerts: []
+      - eval_time: 4m
+        alertname: TargetDown
+        exp_alerts:
+          - exp_labels: { severity: critical, job: node, instance: "mc-01:9100" }
+            exp_annotations:
+              summary: "node on mc-01:9100 is unreachable"
+              description: "Prometheus could not scrape mc-01:9100 for 2 minutes."
+
+  - name: backup older than 36h alerts, fresh backup doesn't
+    interval: 1m
+    input_series:
+      # last success at t=0, never updated again
+      - series: 'backup_toolkit_backup_last_success_timestamp_seconds{tag="mc-01"}'
+        values: "0x2400"
+      # updated every minute, i.e. always fresh
+      - series: 'backup_toolkit_backup_last_success_timestamp_seconds{tag="fresh"}'
+        values: "0+60x2400"
+    alert_rule_test:
+      - eval_time: 30h
+        alertname: BackupTooOld
+        exp_alerts: []
+      - eval_time: 38h
+        alertname: BackupTooOld
+        exp_alerts:
+          - exp_labels: { severity: critical, tag: mc-01 }
+            exp_annotations:
+              summary: "No successful backup for mc-01 in over 36h"
+              description: "Last success 1d 14h 0m 0s ago."
+
+  - name: failed restore test alerts immediately
+    interval: 1m
+    input_series:
+      - series: 'backup_toolkit_restore_test_last_exit_code{tag="mc-01"}'
+        values: "0 0 1"
+      - series: 'backup_toolkit_restore_test_last_success_timestamp_seconds{tag="mc-01"}'
+        values: "0 0 0"
+    alert_rule_test:
+      - eval_time: 1m
+        alertname: RestoreTestFailing
+        exp_alerts: []
+      - eval_time: 2m
+        alertname: RestoreTestFailing
+        exp_alerts:
+          - exp_labels: { severity: critical, tag: mc-01 }
+            exp_annotations:
+              summary: "Restore test for mc-01 failed or hasn't passed in 8 days"
+              description: "Backups exist, but nobody has proven they can be restored."
+
+  - name: minecraft down
+    interval: 1m
+    input_series:
+      - series: 'minecraft_status_healthy{server="modpack", instance="mc-01:9225"}'
+        values: "1 0 0 0"
+    alert_rule_test:
+      - eval_time: 3m
+        alertname: MinecraftDown
+        exp_alerts:
+          - exp_labels: { severity: critical, server: modpack, instance: "mc-01:9225" }
+            exp_annotations:
+              summary: "Minecraft server modpack is not responding"
+
+  - name: certificate expiring in 10 days
+    interval: 1m
+    input_series:
+      - series: 'probe_ssl_earliest_cert_expiry{job="websites", instance="https://antonybdc.me"}'
+        values: "864000x200"
+    alert_rule_test:
+      - eval_time: 2h
+        alertname: TlsCertificateExpiresSoon
+        exp_alerts:
+          - exp_labels: { severity: warning, job: websites, instance: "https://antonybdc.me" }
+            exp_annotations:
+              summary: "TLS certificate of https://antonybdc.me expires in 9d 22h 0m 0s"

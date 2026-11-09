@@ -1,0 +1,24 @@
+---
+groups:
+  - name: websites
+    rules:
+      - alert: WebsiteDown
+        expr: probe_success{job="websites"} == 0
+        for: 3m
+        labels: { severity: critical }
+        annotations:
+          summary: "{{ $labels.instance }} is down"
+
+      - alert: TlsCertificateExpiresSoon
+        expr: probe_ssl_earliest_cert_expiry{job="websites"} - time() < 14 * 86400
+        for: 1h
+        labels: { severity: warning }
+        annotations:
+          summary: "TLS certificate of {{ $labels.instance }} expires in {{ $value | humanizeDuration }}"
+
+      - alert: WebsiteSlow
+        expr: probe_duration_seconds{job="websites"} > 2
+        for: 15m
+        labels: { severity: warning }
+        annotations:
+          summary: "{{ $labels.instance }} takes {{ $value | humanizeDuration }} to respond"

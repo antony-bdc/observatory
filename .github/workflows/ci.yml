@@ -1,0 +1,25 @@
+---
+name: ci
+
+on:
+  push:
+  pull_request:
+
+env:
+  PROMETHEUS_VERSION: "3.5.0"
+  ALERTMANAGER_VERSION: "0.28.1"
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install promtool and amtool
+        run: |
+          curl -fsSL "https://github.com/prometheus/prometheus/releases/download/v${PROMETHEUS_VERSION}/prometheus-${PROMETHEUS_VERSION}.linux-amd64.tar.gz" | tar xz
+          curl -fsSL "https://github.com/prometheus/alertmanager/releases/download/v${ALERTMANAGER_VERSION}/alertmanager-${ALERTMANAGER_VERSION}.linux-amd64.tar.gz" | tar xz
+          sudo cp prometheus-*/promtool alertmanager-*/amtool /usr/local/bin/
+      - run: make check
+      - run: make test
+      - run: make validate
+      - run: shellcheck setup.sh

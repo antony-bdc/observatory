@@ -1,0 +1,4 @@
+---
+# Hosts running node_exporter (installed by server-baseline or as a package).
+- targets: ["192.168.1.20:9100"]
+  labels: { host: mc-01 }
