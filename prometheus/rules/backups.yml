@@ -3,7 +3,7 @@ groups:
   - name: backups
     rules:
       - alert: BackupTooOld
-        expr: time() - backup_toolkit_backup_last_success_timestamp_seconds > 36 * 3600
+        expr: time() - safekeep_backup_last_success_timestamp_seconds > 36 * 3600
         for: 15m
         labels: { severity: critical }
         annotations:
@@ -11,15 +11,15 @@ groups:
           description: "Last success {{ $value | humanizeDuration }} ago."
 
       - alert: BackupFailed
-        expr: backup_toolkit_backup_last_exit_code != 0
+        expr: safekeep_backup_last_exit_code != 0
         labels: { severity: warning }
         annotations:
           summary: "Last backup of {{ $labels.tag }} failed (exit {{ $value }})"
 
       - alert: RestoreTestFailing
         expr: |
-          backup_toolkit_restore_test_last_exit_code != 0
-          or time() - backup_toolkit_restore_test_last_success_timestamp_seconds > 8 * 86400
+          safekeep_restore_test_last_exit_code != 0
+          or time() - safekeep_restore_test_last_success_timestamp_seconds > 8 * 86400
         labels: { severity: critical }
         annotations:
           summary: "Restore test for {{ $labels.tag }} failed or hasn't passed in 8 days"

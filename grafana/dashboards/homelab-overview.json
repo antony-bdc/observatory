@@ -295,7 +295,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "time() - backup_toolkit_backup_last_success_timestamp_seconds",
+          "expr": "time() - safekeep_backup_last_success_timestamp_seconds",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -360,7 +360,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "time() - backup_toolkit_restore_test_last_success_timestamp_seconds",
+          "expr": "time() - safekeep_restore_test_last_success_timestamp_seconds",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -425,7 +425,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "backup_toolkit_repository_size_bytes",
+          "expr": "safekeep_repository_size_bytes",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"

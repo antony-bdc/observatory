@@ -1,4 +1,4 @@
 ---
-# mc-monitor exporters (see minecraft-server-ops)
+# mc-monitor exporters (see dwellers-galaxy)
 - targets: ["192.168.1.20:9225"]
   labels: { host: mc-01, server: modpack }

@@ -32,10 +32,10 @@ tests:
     interval: 1m
     input_series:
       # last success at t=0, never updated again
-      - series: 'backup_toolkit_backup_last_success_timestamp_seconds{tag="mc-01"}'
+      - series: 'safekeep_backup_last_success_timestamp_seconds{tag="mc-01"}'
         values: "0x2400"
       # updated every minute, i.e. always fresh
-      - series: 'backup_toolkit_backup_last_success_timestamp_seconds{tag="fresh"}'
+      - series: 'safekeep_backup_last_success_timestamp_seconds{tag="fresh"}'
         values: "0+60x2400"
     alert_rule_test:
       - eval_time: 30h
@@ -52,9 +52,9 @@ tests:
   - name: failed restore test alerts immediately
     interval: 1m
     input_series:
-      - series: 'backup_toolkit_restore_test_last_exit_code{tag="mc-01"}'
+      - series: 'safekeep_restore_test_last_exit_code{tag="mc-01"}'
         values: "0 0 1"
-      - series: 'backup_toolkit_restore_test_last_success_timestamp_seconds{tag="mc-01"}'
+      - series: 'safekeep_restore_test_last_success_timestamp_seconds{tag="mc-01"}'
         values: "0 0 0"
     alert_rule_test:
       - eval_time: 1m

@@ -59,7 +59,7 @@ services:
     image: prom/node-exporter:${NODE_EXPORTER_TAG:-v1.9.1}
     command:
       - --path.rootfs=/host
-      - --collector.textfile.directory=/textfile   # backup-toolkit metrics
+      - --collector.textfile.directory=/textfile   # safekeep metrics
       - --collector.filesystem.mount-points-exclude=^/(dev|proc|sys|run|var/lib/docker/.+)($|/)
     pid: host
     volumes:

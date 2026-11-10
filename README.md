@@ -1,4 +1,4 @@
-# homelab-monitoring
+# observatory
 
 Prometheus, Grafana and Alertmanager for my homelab: hosts, containers, backups, a Minecraft server
 and public websites in one dashboard, with alerts sent to Discord.
@@ -61,4 +61,4 @@ All three run in CI on every push.
 
 ---
 
-Part of my homelab series → [backup-toolkit](https://github.com/businessantonybdc-crypto/backup-toolkit) · [minecraft-server-ops](https://github.com/businessantonybdc-crypto/minecraft-server-ops) · [log-watcher](https://github.com/businessantonybdc-crypto/log-watcher) · [status-page](https://github.com/businessantonybdc-crypto/status-page)
+Part of my homelab series → [safekeep](https://github.com/antony-bdc/safekeep) · [dwellers-galaxy](https://github.com/antony-bdc/dwellers-galaxy) · [logwarden](https://github.com/antony-bdc/logwarden) · [antonybdc-status](https://github.com/antony-bdc/antonybdc-status)
