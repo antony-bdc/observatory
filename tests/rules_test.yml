@@ -84,12 +84,12 @@ tests:
   - name: certificate expiring in 10 days
     interval: 1m
     input_series:
-      - series: 'probe_ssl_earliest_cert_expiry{job="websites", instance="https://antonybdc.me"}'
+      - series: 'probe_ssl_earliest_cert_expiry{job="websites", instance="https://antonybdc.ch"}'
         values: "864000x200"
     alert_rule_test:
       - eval_time: 2h
         alertname: TlsCertificateExpiresSoon
         exp_alerts:
-          - exp_labels: { severity: warning, job: websites, instance: "https://antonybdc.me" }
+          - exp_labels: { severity: warning, job: websites, instance: "https://antonybdc.ch" }
             exp_annotations:
-              summary: "TLS certificate of https://antonybdc.me expires in 9d 22h 0m 0s"
+              summary: "TLS certificate of https://antonybdc.ch expires in 9d 22h 0m 0s"
